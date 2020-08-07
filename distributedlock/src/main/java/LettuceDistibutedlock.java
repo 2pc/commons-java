@@ -1,7 +1,4 @@
-import io.lettuce.core.ReadFrom;
-import io.lettuce.core.RedisURI;
-import io.lettuce.core.ScriptOutputType;
-import io.lettuce.core.SetArgs;
+import io.lettuce.core.*;
 import io.lettuce.core.cluster.ClusterClientOptions;
 import io.lettuce.core.cluster.ClusterTopologyRefreshOptions;
 import io.lettuce.core.cluster.RedisClusterClient;
@@ -69,8 +66,9 @@ public class LettuceDistibutedlock {
 
     public CompletableFuture<Long> tryUnLockAsync(String lockKey, String lockId){
         String[] keys = {lockKey};
-        commands.eval(UN_LOCK_LUA_SCRIPT, ScriptOutputType.INTEGER, keys ,lockId);
+        RedisFuture<Long> evalRet = commands.eval(UN_LOCK_LUA_SCRIPT, ScriptOutputType.INTEGER, keys ,lockId);
 
+        return (CompletableFuture<Long>)evalRet;
     }
 
 
